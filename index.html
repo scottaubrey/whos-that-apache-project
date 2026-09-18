@@ -317,7 +317,7 @@
             #dialogue {
                 margin: 0;
                 font-family: "Luckiest Guy", cursive;
-                font-size: min(6vw, 4.8vh);
+                font-size: min(4vw, 3.4vh);
                 letter-spacing: 1px;
                 color: var(--gold);
             }
@@ -330,11 +330,12 @@
             }
 
             #project-desc {
+                --outline: var(--outline-thin);
                 margin: 0;
+                max-width: 60ch;
                 color: #fff;
-                font-size: 9px;
-                line-height: 1.7;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+                font-size: 13px;
+                line-height: 1.8;
             }
 
             #next-btn {
@@ -392,7 +393,7 @@
                     bottom: 13%;
                 }
                 #dialogue {
-                    font-size: min(8vw, 4.4vh);
+                    font-size: min(5.6vw, 3.6vh);
                 }
             }
         </style>
@@ -447,7 +448,7 @@
 
                 <div class="reveal" id="reveal" hidden>
                     <p id="dialogue" class="outlined"></p>
-                    <p id="project-desc" hidden></p>
+                    <p id="project-desc" class="outlined" hidden></p>
                     <button id="next-btn" type="button">Next →</button>
                 </div>
             </div>
