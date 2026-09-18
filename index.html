@@ -17,7 +17,9 @@
                 --gold: #ffd12e;
                 --navy: #1d3d8f;
                 --ink: #1a1a1a;
-                --stage: min(42vmin, 440px);
+                --stage: min(38vmin, 400px);
+                --outline-thick: clamp(2px, 0.4vw, 5px);
+                --outline-thin: clamp(1.5px, 0.25vw, 3px);
             }
 
             * {
@@ -31,6 +33,21 @@
                 overflow: hidden;
                 font-family: "Press Start 2P", monospace;
                 color: var(--ink);
+            }
+
+            .outlined {
+                --outline: var(--outline-thick);
+                text-shadow:
+                    calc(var(--outline) * -1) calc(var(--outline) * -1) 0
+                        var(--navy),
+                    var(--outline) calc(var(--outline) * -1) 0 var(--navy),
+                    calc(var(--outline) * -1) var(--outline) 0 var(--navy),
+                    var(--outline) var(--outline) 0 var(--navy),
+                    0 calc(var(--outline) * -1) 0 var(--navy),
+                    0 var(--outline) 0 var(--navy),
+                    calc(var(--outline) * -1) 0 0 var(--navy),
+                    var(--outline) 0 0 var(--navy),
+                    4px 4px 0 rgba(0, 0, 0, 0.3);
             }
 
             .stage {
@@ -57,7 +74,7 @@
 
             .rays {
                 position: absolute;
-                top: 50%;
+                top: 46%;
                 left: 50%;
                 width: 140vmax;
                 height: 140vmax;
@@ -78,7 +95,7 @@
 
             .glow {
                 position: absolute;
-                top: 50%;
+                top: 46%;
                 left: 50%;
                 width: 55vmin;
                 height: 55vmin;
@@ -94,7 +111,7 @@
 
             .mark {
                 position: absolute;
-                top: 50%;
+                top: 46%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 width: var(--stage);
@@ -125,7 +142,7 @@
 
             .silhouette-wrap {
                 position: absolute;
-                top: 50%;
+                top: 46%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 width: var(--stage);
@@ -144,55 +161,6 @@
                 background: rgba(0, 20, 40, 0.25);
                 border-radius: 50%;
                 filter: blur(4px);
-            }
-
-            .name-plate {
-                position: absolute;
-                top: calc(50% + (var(--stage) / 2) + 18px);
-                left: 50%;
-                transform: translateX(-50%);
-                white-space: nowrap;
-                font-family: "Luckiest Guy", cursive;
-                font-size: min(5vw, 4.6vh);
-                color: #d8d8d8;
-                --outline: clamp(2px, 0.3vw, 4px);
-                text-shadow:
-                    calc(var(--outline) * -1) calc(var(--outline) * -1) 0
-                        var(--navy),
-                    var(--outline) calc(var(--outline) * -1) 0 var(--navy),
-                    calc(var(--outline) * -1) var(--outline) 0 var(--navy),
-                    var(--outline) var(--outline) 0 var(--navy),
-                    0 calc(var(--outline) * -1) 0 var(--navy),
-                    0 var(--outline) 0 var(--navy),
-                    calc(var(--outline) * -1) 0 0 var(--navy),
-                    var(--outline) 0 0 var(--navy),
-                    3px 3px 0 rgba(0, 0, 0, 0.3);
-                opacity: 0.7;
-                z-index: 8;
-                transition: opacity 0.2s ease, color 0.2s ease;
-            }
-
-            .name-plate.spoiled {
-                opacity: 1;
-                color: var(--gold);
-            }
-
-            .name-plate.revealed {
-                opacity: 1;
-                color: var(--gold);
-                animation: nameplate-pop 0.5s ease;
-            }
-
-            @keyframes nameplate-pop {
-                0% {
-                    transform: translateX(-50%) scale(0.8) rotate(-3deg);
-                }
-                55% {
-                    transform: translateX(-50%) scale(1.12) rotate(2deg);
-                }
-                100% {
-                    transform: translateX(-50%) scale(1) rotate(0deg);
-                }
             }
 
             #logo {
@@ -237,87 +205,62 @@
                 font-family: "Luckiest Guy", cursive;
                 font-size: min(6vw, 5vh);
                 color: var(--gold);
-                --outline: clamp(2px, 0.3vw, 4px);
-                text-shadow:
-                    calc(var(--outline) * -1) calc(var(--outline) * -1) 0
-                        var(--navy),
-                    var(--outline) calc(var(--outline) * -1) 0 var(--navy),
-                    calc(var(--outline) * -1) var(--outline) 0 var(--navy),
-                    var(--outline) var(--outline) 0 var(--navy),
-                    0 calc(var(--outline) * -1) 0 var(--navy),
-                    0 var(--outline) 0 var(--navy),
-                    calc(var(--outline) * -1) 0 0 var(--navy),
-                    var(--outline) 0 0 var(--navy),
-                    4px 4px 0 rgba(0, 0, 0, 0.3);
                 text-align: center;
                 white-space: nowrap;
                 letter-spacing: 1px;
             }
 
-            .panel {
+            .name-plate {
+                position: absolute;
+                top: calc(46% - (var(--stage) / 2) - 14px);
+                left: 50%;
+                transform: translate(-50%, -100%);
+                white-space: nowrap;
+                font-family: "Luckiest Guy", cursive;
+                font-size: min(5vw, 4.6vh);
+                color: #d8d8d8;
+                opacity: 0.7;
+                z-index: 8;
+                transition:
+                    opacity 0.2s ease,
+                    color 0.2s ease;
+            }
+
+            .name-plate.spoiled {
+                opacity: 1;
+                color: var(--gold);
+            }
+
+            .name-plate.revealed {
+                opacity: 1;
+                color: var(--gold);
+                animation: nameplate-pop 0.5s ease;
+            }
+
+            @keyframes nameplate-pop {
+                0% {
+                    transform: translate(-50%, -100%) scale(0.8) rotate(-3deg);
+                }
+                55% {
+                    transform: translate(-50%, -100%) scale(1.12) rotate(2deg);
+                }
+                100% {
+                    transform: translate(-50%, -100%) scale(1) rotate(0deg);
+                }
+            }
+
+            .bottom-bar {
                 position: fixed;
                 left: 50%;
-                bottom: 3%;
+                bottom: 11%;
                 transform: translateX(-50%);
                 width: min(92vw, 640px);
-                background: rgba(10, 15, 30, 0.78);
-                border: 3px solid var(--gold);
-                border-radius: 14px;
-                padding: 14px 18px;
                 z-index: 5;
-                backdrop-filter: blur(2px);
-            }
-
-            .status {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                color: var(--gold);
-                font-size: 9px;
-                margin-bottom: 10px;
-            }
-
-            .name-toggle {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                cursor: pointer;
-                user-select: none;
-            }
-
-            .name-toggle input {
-                margin: 0;
-                cursor: pointer;
-            }
-
-            #dialogue {
-                color: #fff;
-                font-size: 10px;
-                line-height: 1.7;
-                margin: 0 0 12px;
-                min-height: 34px;
-                text-align: center;
-            }
-
-            #dialogue.correct {
-                color: #7ee787;
-            }
-            #dialogue.wrong {
-                color: #ff8a8a;
-            }
-
-            #project-desc {
-                color: #bcd4f2;
-                font-size: 8px;
-                line-height: 1.7;
-                text-align: center;
-                margin: -6px 0 12px;
             }
 
             .choices {
                 display: flex;
                 gap: 10px;
-                margin-bottom: 10px;
             }
 
             .choice-btn {
@@ -334,16 +277,6 @@
             #pokemon-btn {
                 background: var(--red);
                 color: #fff;
-            }
-
-            .choice-btn.correct-answer {
-                background: #7ed957 !important;
-                color: var(--ink);
-            }
-            .choice-btn.wrong-answer {
-                background: #444 !important;
-                color: #fff;
-                opacity: 0.6;
             }
 
             button {
@@ -368,19 +301,79 @@
                 cursor: not-allowed;
             }
 
-            .controls {
+            .reveal {
                 display: flex;
-                justify-content: flex-end;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .reveal[hidden],
+            .choices[hidden] {
+                display: none;
+            }
+
+            #dialogue {
+                margin: 0;
+                font-family: "Luckiest Guy", cursive;
+                font-size: min(6vw, 4.8vh);
+                letter-spacing: 1px;
+                color: var(--gold);
+            }
+
+            #dialogue.correct {
+                color: #7ee787;
+            }
+            #dialogue.wrong {
+                color: #ff8a8a;
+            }
+
+            #project-desc {
+                margin: 0;
+                color: #fff;
+                font-size: 9px;
+                line-height: 1.7;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
             }
 
             #next-btn {
                 background: #7ed957;
-                padding: 10px 16px;
+                padding: 10px 20px;
+                font-size: 11px;
+            }
+
+            .stats {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 4%;
+                color: var(--gold);
+                font-size: 8px;
+                z-index: 5;
+                text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+            }
+
+            .name-toggle {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .name-toggle input {
+                margin: 0;
+                cursor: pointer;
             }
 
             @media (max-width: 640px) {
                 :root {
-                    --stage: min(58vmin, 300px);
+                    --stage: min(52vmin, 280px);
                 }
                 .name-plate {
                     font-size: min(6vw, 3.4vh);
@@ -395,6 +388,12 @@
                 .choices {
                     flex-direction: column;
                 }
+                .bottom-bar {
+                    bottom: 13%;
+                }
+                #dialogue {
+                    font-size: min(8vw, 4.4vh);
+                }
             }
         </style>
     </head>
@@ -405,8 +404,10 @@
             <div class="glow"></div>
 
             <div class="title-bar">
-                <h1 class="title">Is It Apache or Pokémon?</h1>
+                <h1 class="title outlined">Is It Apache or Pokémon?</h1>
             </div>
+
+            <div class="name-plate outlined" id="name-plate"></div>
 
             <div class="mark" id="mark">
                 <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
@@ -424,22 +425,8 @@
                 />
             </div>
 
-            <div class="name-plate" id="name-plate"></div>
-
-            <div class="panel">
-                <div class="status">
-                    <span id="score">Score: 0</span>
-                    <label class="name-toggle">
-                        <input type="checkbox" id="show-name-toggle" />
-                        Show name
-                    </label>
-                    <span id="streak">Streak: 0</span>
-                </div>
-
-                <p id="dialogue">Loading data…</p>
-                <p id="project-desc" hidden></p>
-
-                <div class="choices">
+            <div class="bottom-bar">
+                <div class="choices" id="choices">
                     <button
                         id="apache-btn"
                         class="choice-btn"
@@ -458,9 +445,20 @@
                     </button>
                 </div>
 
-                <div class="controls">
-                    <button id="next-btn" type="button" hidden>Next →</button>
+                <div class="reveal" id="reveal" hidden>
+                    <p id="dialogue" class="outlined"></p>
+                    <p id="project-desc" hidden></p>
+                    <button id="next-btn" type="button">Next →</button>
                 </div>
+            </div>
+
+            <div class="stats">
+                <span id="score">Score: 0</span>
+                <label class="name-toggle">
+                    <input type="checkbox" id="show-name-toggle" />
+                    Show name
+                </label>
+                <span id="streak">Streak: 0</span>
             </div>
         </div>
 
@@ -495,6 +493,8 @@
             const markEl = document.getElementById("mark");
             const markTextEl = document.getElementById("mark-text");
             const namePlateEl = document.getElementById("name-plate");
+            const choicesEl = document.getElementById("choices");
+            const revealEl = document.getElementById("reveal");
             const dialogueEl = document.getElementById("dialogue");
             const projectDescEl = document.getElementById("project-desc");
             const apacheBtn = document.getElementById("apache-btn");
@@ -567,12 +567,6 @@
                 return { ...item, category };
             }
 
-            function setDialogue(text, mood) {
-                dialogueEl.textContent = text;
-                dialogueEl.classList.remove("correct", "wrong");
-                if (mood) dialogueEl.classList.add(mood);
-            }
-
             function startRound() {
                 state.current = pickNext();
                 state.solved = false;
@@ -582,15 +576,16 @@
                 markEl.style.opacity = "1";
                 namePlateEl.classList.remove("revealed");
                 updateNamePlate();
+
                 projectDescEl.hidden = true;
                 projectDescEl.textContent = "";
+                dialogueEl.textContent = "";
+                dialogueEl.classList.remove("correct", "wrong");
 
-                setDialogue("Is it Apache or Pokémon?");
+                choicesEl.hidden = false;
+                revealEl.hidden = true;
                 apacheBtn.disabled = false;
                 pokemonBtn.disabled = false;
-                apacheBtn.classList.remove("correct-answer", "wrong-answer");
-                pokemonBtn.classList.remove("correct-answer", "wrong-answer");
-                nextBtn.hidden = true;
             }
 
             function handleChoice(category) {
@@ -598,17 +593,6 @@
                 state.solved = true;
 
                 const correct = category === state.current.category;
-                const correctBtn =
-                    state.current.category === "apache"
-                        ? apacheBtn
-                        : pokemonBtn;
-                const wrongBtn =
-                    state.current.category === "apache"
-                        ? pokemonBtn
-                        : apacheBtn;
-
-                correctBtn.classList.add("correct-answer");
-                if (!correct) wrongBtn.classList.add("wrong-answer");
 
                 apacheBtn.disabled = true;
                 pokemonBtn.disabled = true;
@@ -626,21 +610,24 @@
                     projectDescEl.hidden = false;
                 }
 
-                const kind =
+                const article =
                     state.current.category === "apache"
                         ? "an Apache project"
                         : "a Pokémon";
+                dialogueEl.textContent = `That's ${article}!`;
+                dialogueEl.classList.toggle("correct", correct);
+                dialogueEl.classList.toggle("wrong", !correct);
+
                 if (correct) {
                     state.score += 1;
                     state.streak += 1;
-                    setDialogue(`Correct! That's ${kind}.`, "correct");
                 } else {
                     state.streak = 0;
-                    setDialogue(`Nope, that's ${kind}.`, "wrong");
                 }
 
                 updateScoreboard();
-                nextBtn.hidden = false;
+                choicesEl.hidden = true;
+                revealEl.hidden = false;
                 nextBtn.focus();
             }
 
@@ -749,10 +736,12 @@
                         );
                     }
                 } catch (err) {
-                    setDialogue(
-                        "Couldn't load game data. Try refreshing.",
-                        "wrong",
-                    );
+                    dialogueEl.textContent =
+                        "Couldn't load game data. Try refreshing.";
+                    dialogueEl.classList.add("wrong");
+                    choicesEl.hidden = true;
+                    revealEl.hidden = false;
+                    nextBtn.hidden = true;
                     console.error(err);
                     return;
                 }
