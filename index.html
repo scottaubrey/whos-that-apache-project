@@ -306,6 +306,14 @@
                 color: #ff8a8a;
             }
 
+            #project-desc {
+                color: #bcd4f2;
+                font-size: 8px;
+                line-height: 1.7;
+                text-align: center;
+                margin: -6px 0 12px;
+            }
+
             .choices {
                 display: flex;
                 gap: 10px;
@@ -429,6 +437,7 @@
                 </div>
 
                 <p id="dialogue">Loading data…</p>
+                <p id="project-desc" hidden></p>
 
                 <div class="choices">
                     <button
@@ -459,10 +468,13 @@
             // Live data sources — nothing is baked into this page:
             // - Apache project names/marks come from simple-icons' published catalogue.
             // - Pokémon names/artwork come from PokéAPI and its companion sprite repo.
+            // - Apache project descriptions come from the ASF's own project registry.
             const ICON_DATA_URL =
                 "https://cdn.jsdelivr.net/npm/simple-icons@latest/data/simple-icons.json";
             const POKEMON_LIST_URL =
                 "https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0";
+            const PROJECTS_API_URL =
+                "https://projects.apache.org/json/foundation/projects.json";
             const apacheImageUrl = (slug) =>
                 `https://cdn.simpleicons.org/${slug}`;
             const pokemonImageUrl = (id) =>
@@ -484,6 +496,7 @@
             const markTextEl = document.getElementById("mark-text");
             const namePlateEl = document.getElementById("name-plate");
             const dialogueEl = document.getElementById("dialogue");
+            const projectDescEl = document.getElementById("project-desc");
             const apacheBtn = document.getElementById("apache-btn");
             const pokemonBtn = document.getElementById("pokemon-btn");
             const nextBtn = document.getElementById("next-btn");
@@ -523,6 +536,18 @@
                     .join(" ");
             }
 
+            function normalizeKey(str) {
+                return str.toLowerCase().replace(/[^a-z0-9]/g, "");
+            }
+
+            function shortText(str, maxLen = 130) {
+                if (!str) return "";
+                const clean = str.replace(/\s+/g, " ").trim();
+                if (clean.length <= maxLen) return clean;
+                const cut = clean.slice(0, maxLen);
+                return cut.slice(0, cut.lastIndexOf(" ")) + "…";
+            }
+
             function pickNext() {
                 // Flip the category first so a 36-project pool and a 1300+ Pokémon
                 // pool still come up equally often, then pick within that category.
@@ -557,6 +582,8 @@
                 markEl.style.opacity = "1";
                 namePlateEl.classList.remove("revealed");
                 updateNamePlate();
+                projectDescEl.hidden = true;
+                projectDescEl.textContent = "";
 
                 setDialogue("Is it Apache or Pokémon?");
                 apacheBtn.disabled = false;
@@ -591,6 +618,14 @@
                 updateNamePlate();
                 namePlateEl.classList.add("revealed");
 
+                if (
+                    state.current.category === "apache" &&
+                    state.current.description
+                ) {
+                    projectDescEl.textContent = state.current.description;
+                    projectDescEl.hidden = false;
+                }
+
                 const kind =
                     state.current.category === "apache"
                         ? "an Apache project"
@@ -616,10 +651,14 @@
 
             async function init() {
                 try {
-                    const [iconRes, pokemonRes] = await Promise.all([
-                        fetch(ICON_DATA_URL),
-                        fetch(POKEMON_LIST_URL),
-                    ]);
+                    const [iconRes, pokemonRes, projectsRes] =
+                        await Promise.all([
+                            fetch(ICON_DATA_URL),
+                            fetch(POKEMON_LIST_URL),
+                            // Descriptions are a nice-to-have — don't let a
+                            // failure here block the whole game.
+                            fetch(PROJECTS_API_URL).catch(() => null),
+                        ]);
                     if (!iconRes.ok)
                         throw new Error(`Failed to load ${ICON_DATA_URL}`);
                     if (!pokemonRes.ok)
@@ -627,6 +666,28 @@
 
                     const icons = await iconRes.json();
                     const pokemonList = await pokemonRes.json();
+
+                    const descriptionsByName = new Map();
+                    if (projectsRes && projectsRes.ok) {
+                        try {
+                            const projects = await projectsRes.json();
+                            for (const entry of Object.values(projects)) {
+                                if (!entry || !entry.name) continue;
+                                const desc =
+                                    entry.shortdesc || entry.description;
+                                if (desc)
+                                    descriptionsByName.set(
+                                        normalizeKey(entry.name),
+                                        desc,
+                                    );
+                            }
+                        } catch (err) {
+                            console.error(
+                                "Could not parse Apache project descriptions",
+                                err,
+                            );
+                        }
+                    }
 
                     state.apacheRoster = icons
                         .filter(
@@ -640,13 +701,20 @@
                                 icon.title
                                     .toLowerCase()
                                     .replace(/[^a-z0-9]/g, "");
+                            const cleanTitle = icon.title.replace(
+                                /\sIDE$/,
+                                "",
+                            );
                             return {
                                 id: `apache-${slug}`,
                                 slug,
-                                name: icon.title
-                                    .replace(/^Apache\s+/, "")
-                                    .replace(/\sIDE$/, ""),
+                                name: cleanTitle.replace(/^Apache\s+/, ""),
                                 image: apacheImageUrl(slug),
+                                description: shortText(
+                                    descriptionsByName.get(
+                                        normalizeKey(cleanTitle),
+                                    ),
+                                ),
                             };
                         })
                         .filter(
